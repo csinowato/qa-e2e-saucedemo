@@ -1,4 +1,5 @@
 class CartPage {
+  // Assumes user is logged in and on the products page
   visit() {
     cy.get('.shopping_cart_link').click();
   }
