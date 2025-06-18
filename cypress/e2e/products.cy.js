@@ -1,8 +1,10 @@
 /// <reference types="cypress" />
 
 import ProductsPage from '../pages/ProductsPage';
+import Navbar from '../pages/Navbar';
 
 const productsPage = new ProductsPage();
+const navbar = new Navbar();
 
 describe('Product Page Functionality', () => {
   beforeEach(() => {
@@ -17,7 +19,7 @@ describe('Product Page Functionality', () => {
   it('adds selected product to cart', () => {
     const productName = 'Sauce Labs Backpack';
     productsPage.addProduct(productName);
-    productsPage.getCartBadge().should('be.visible').and('contain', '1');
+    navbar.getCartBadge().should('be.visible').and('contain', '1');
     cy.contains('.inventory_item', productName).should('contain', 'Remove');
   });
 
@@ -25,7 +27,7 @@ describe('Product Page Functionality', () => {
     const productName = 'Sauce Labs Bike Light';
     productsPage.addProduct(productName);
     productsPage.removeProduct(productName);
-    productsPage.getCartBadge().should('not.exist');
+    navbar.getCartBadge().should('not.exist');
     cy.contains('.inventory_item', productName).should('contain', 'Add to cart');
   });
 

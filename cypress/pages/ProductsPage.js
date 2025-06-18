@@ -7,10 +7,6 @@ class ProductsPage {
     return cy.get('.inventory_item');
   }
 
-  getCartBadge() {
-    return cy.get('.shopping_cart_badge');
-  }
-
   addProduct(productName) {
     cy.contains('.inventory_item', productName).contains('Add to cart').click();
   }
