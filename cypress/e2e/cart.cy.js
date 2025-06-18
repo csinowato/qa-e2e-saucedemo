@@ -37,6 +37,16 @@ describe('Cart Functionality', () => {
     navbar.getCartBadge().should('not.exist');
   });
 
+  it('keeps cart contents when page is refreshed', () => {
+    const productName = 'Sauce Labs Backpack';
+    productsPage.addProduct(productName);
+    cartPage.visit();
+    cartPage.checkProductInCart(productName).should('exist');
+    cy.reload();
+    cartPage.checkProductInCart(productName).should('exist');
+    navbar.getCartBadge().should('be.visible').and('contain', '1');
+  });
+
   it('keeps cart contents when navigating away and back to cart', () => {
     const productName = 'Sauce Labs Backpack';
     productsPage.addProduct(productName);
