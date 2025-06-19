@@ -20,6 +20,10 @@ class LoginPage {
     this.inputPassword(password);
     this.clickLogin();
   }
+
+  getErrorMessage() {
+    return cy.get('.error-message-container h3');
+  }
 }
 
 export default LoginPage;

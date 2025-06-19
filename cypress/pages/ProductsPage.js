@@ -3,6 +3,10 @@ class ProductsPage {
     cy.login('standard_user', 'secret_sauce');
   }
 
+  visitWithoutLogin() {
+    cy.visit('/inventory.html', { failOnStatusCode: false });
+  }
+
   getProducts() {
     return cy.get('.inventory_item');
   }
