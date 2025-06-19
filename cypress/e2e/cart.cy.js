@@ -8,13 +8,14 @@ const productsPage = new ProductsPage();
 const cartPage = new CartPage();
 const navbar = new Navbar();
 
+const productName = 'Sauce Labs Backpack';
+
 describe('Cart Functionality', () => {
   beforeEach(() => {
     productsPage.visit();
   });
 
   it('shows added products in cart', () => {
-    const productName = 'Sauce Labs Fleece Jacket';
     productsPage.addProduct(productName);
     cartPage.visit();
     cartPage.checkProductInCart(productName).should('exist');
@@ -22,7 +23,6 @@ describe('Cart Functionality', () => {
   });
 
   it('removes products from cart', () => {
-    const productName = 'Sauce Labs Onesie';
     productsPage.addProduct(productName);
     cartPage.visit();
     cartPage.checkProductInCart(productName).should('exist');
@@ -33,12 +33,11 @@ describe('Cart Functionality', () => {
 
   it('shows empty cart when no items are added', () => {
     cartPage.visit();
-    cartPage.checkEmptyCart().should('not.exist');
+    cartPage.getCartItem().should('not.exist');
     navbar.getCartBadge().should('not.exist');
   });
 
   it('keeps cart contents when page is refreshed', () => {
-    const productName = 'Sauce Labs Backpack';
     productsPage.addProduct(productName);
     cartPage.visit();
     cartPage.checkProductInCart(productName).should('exist');
@@ -48,7 +47,6 @@ describe('Cart Functionality', () => {
   });
 
   it('keeps cart contents when navigating away and back to cart', () => {
-    const productName = 'Sauce Labs Backpack';
     productsPage.addProduct(productName);
     cartPage.visit();
     cartPage.checkProductInCart(productName).should('exist');
@@ -59,7 +57,6 @@ describe('Cart Functionality', () => {
   });
 
   it('adds additional products via continue shopping', () => {
-    const productName = 'Sauce Labs Backpack';
     const secondProduct = 'Sauce Labs Bolt T-Shirt';
     productsPage.addProduct(productName);
     cartPage.visit();

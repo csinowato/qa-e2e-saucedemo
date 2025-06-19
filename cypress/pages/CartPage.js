@@ -12,7 +12,7 @@ class CartPage {
     cy.contains('.cart_item', productName).contains('Remove').click();
   }
 
-  checkEmptyCart() {
+  getCartItem() {
     return cy.get('.cart_item');
   }
 
