@@ -1,0 +1,18 @@
+{
+  "usernames": {
+    "standard": "standard_user",
+    "lockedOut": "locked_out_user",
+    "problem": "problem_user",
+    "performanceGlitch": "performance_glitch_user",
+    "error": "error_user"
+  },
+  "passwords": {
+    "valid": "secret_sauce",
+    "invalid": "wrong_password"
+  },
+  "checkoutInfo": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "postalCode": "12345"
+  }
+}

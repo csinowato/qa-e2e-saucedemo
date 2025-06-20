@@ -4,19 +4,25 @@ import LoginPage from '../pages/LoginPage';
 
 const loginPage = new LoginPage();
 
+let usernames, passwords;
+
 describe('Login Functionality', () => {
   beforeEach(() => {
     loginPage.visit();
+    cy.fixture('users').then((data) => {
+      ({ usernames, passwords } = data);
+    });
   });
 
   it('successfully logs in with valid credentials', () => {
-    loginPage.login('standard_user', 'secret_sauce');
+    cy.login(usernames.standard, passwords.valid);
     cy.url().should('include', '/inventory.html');
   });
 
   it('shows error when password is incorrect', () => {
-    loginPage.login('standard_user', 'wrong_password');
-    cy.get('.error-message-container h3')
+    cy.login(usernames.standard, passwords.invalid);
+    loginPage
+      .getErrorMessage()
       .should('be.visible')
       .and('contain', 'Username and password do not match');
   });
@@ -28,26 +34,26 @@ describe('Login Functionality', () => {
   });
 
   it('shows error when password is empty', () => {
-    loginPage.inputUsername('standard_user');
+    loginPage.inputUsername(usernames.standard);
     loginPage.clickLogin();
-    cy.get('.error-message-container h3')
-      .should('be.visible')
-      .and('contain', 'Password is required');
+    loginPage.getErrorMessage().should('be.visible').and('contain', 'Password is required');
   });
 
   it('shows error for locked out user', () => {
-    loginPage.login('locked_out_user', 'secret_sauce');
-    cy.get('.error-message-container h3')
+    cy.login(usernames.lockedOut, passwords.valid);
+    loginPage
+      .getErrorMessage()
       .should('be.visible')
       .and('contain', 'Sorry, this user has been locked out');
   });
 
   it('removes error message when page is refreshed', () => {
-    loginPage.login('locked_out_user', 'secret_sauce');
-    cy.get('.error-message-container h3')
+    cy.login(usernames.lockedOut, passwords.valid);
+    loginPage
+      .getErrorMessage()
       .should('be.visible')
       .and('contain', 'Sorry, this user has been locked out');
     cy.reload();
-    cy.get('.error-message-container h3').should('not.exist');
+    loginPage.getErrorMessage().should('not.exist');
   });
 });

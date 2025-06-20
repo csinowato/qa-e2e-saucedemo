@@ -1,8 +1,4 @@
 class ProductsPage {
-  visit() {
-    cy.login('standard_user', 'secret_sauce');
-  }
-
   visitWithoutLogin() {
     cy.visit('/inventory.html', { failOnStatusCode: false });
   }

@@ -8,26 +8,33 @@ const productsPage = new ProductsPage();
 const cartPage = new CartPage();
 const navbar = new Navbar();
 
-const productName = 'Sauce Labs Backpack';
+let usernames, passwords;
+let products;
 
 describe('Cart Functionality', () => {
   beforeEach(() => {
-    productsPage.visit();
+    cy.fixture('users').then((data) => {
+      ({ usernames, passwords } = data);
+      cy.login(usernames.standard, passwords.valid);
+    });
+    cy.fixture('products').then((data) => {
+      products = data;
+    });
   });
 
   it('shows added products in cart', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
-    cartPage.checkProductInCart(productName).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
     navbar.getCartBadge().should('be.visible').and('contain', '1');
   });
 
   it('removes products from cart', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
-    cartPage.checkProductInCart(productName).should('exist');
-    cartPage.removeFromCart(productName);
-    cartPage.checkProductInCart(productName).should('not.exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
+    cartPage.removeFromCart(products.backpack);
+    cartPage.checkProductInCart(products.backpack).should('not.exist');
     navbar.getCartBadge().should('not.exist');
   });
 
@@ -38,34 +45,33 @@ describe('Cart Functionality', () => {
   });
 
   it('keeps cart contents when page is refreshed', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
-    cartPage.checkProductInCart(productName).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
     cy.reload();
-    cartPage.checkProductInCart(productName).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
     navbar.getCartBadge().should('be.visible').and('contain', '1');
   });
 
   it('keeps cart contents when navigating away and back to cart', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
-    cartPage.checkProductInCart(productName).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
     cartPage.continueShopping();
     cartPage.visit();
-    cartPage.checkProductInCart(productName).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
     navbar.getCartBadge().should('be.visible').and('contain', '1');
   });
 
   it('adds additional products via continue shopping', () => {
-    const secondProduct = 'Sauce Labs Bolt T-Shirt';
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
-    cartPage.checkProductInCart(productName).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
     cartPage.continueShopping();
-    productsPage.addProduct(secondProduct);
+    productsPage.addProduct(products.onesie);
     cartPage.visit();
-    cartPage.checkProductInCart(productName).should('exist');
-    cartPage.checkProductInCart(secondProduct).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
+    cartPage.checkProductInCart(products.onesie).should('exist');
     navbar.getCartBadge().should('be.visible').and('contain', '2');
   });
 });

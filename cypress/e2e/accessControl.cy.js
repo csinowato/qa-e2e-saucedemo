@@ -8,7 +8,15 @@ const loginPage = new LoginPage();
 const productsPage = new ProductsPage();
 const navbar = new Navbar();
 
+let usernames, passwords;
+
 describe('Access Control', () => {
+  beforeEach(() => {
+    cy.fixture('users').then((data) => {
+      ({ usernames, passwords } = data);
+    });
+  });
+
   it('prevents unauthorized access to /inventory.html and redirects to login page', () => {
     productsPage.visitWithoutLogin();
     cy.url().should('eq', `${Cypress.config('baseUrl')}`);
@@ -19,7 +27,7 @@ describe('Access Control', () => {
   });
 
   it('prevents access to /inventory.html after logout and pressing the back button', () => {
-    productsPage.visit();
+    cy.login(usernames.standard, passwords.valid);
     cy.url().should('include', '/inventory.html');
     navbar.openNavbar();
     navbar.logout();

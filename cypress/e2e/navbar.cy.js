@@ -8,9 +8,18 @@ const navbar = new Navbar();
 const productsPage = new ProductsPage();
 const cartPage = new CartPage();
 
+let usernames, passwords;
+let products;
+
 describe('Navbar Functionality', () => {
   beforeEach(() => {
-    cy.login('standard_user', 'secret_sauce');
+    cy.fixture('products').then((data) => {
+      products = data;
+    });
+    cy.fixture('users').then((data) => {
+      ({ usernames, passwords } = data);
+      cy.login(usernames.standard, passwords.valid);
+    });
   });
 
   it('opens sidebar menu', () => {
@@ -33,10 +42,8 @@ describe('Navbar Functionality', () => {
   });
 
   it('resets app state', () => {
-    const productName = 'Sauce Labs Backpack';
-    const secondProduct = 'Sauce Labs Bolt T-Shirt';
-    productsPage.addProduct(productName);
-    productsPage.addProduct(secondProduct);
+    productsPage.addProduct(products.backpack);
+    productsPage.addProduct(products.onesie);
     navbar.getCartBadge().should('be.visible').and('contain', '2');
     navbar.openNavbar();
     navbar.resetAppState();

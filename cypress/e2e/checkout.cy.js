@@ -10,18 +10,24 @@ const cartPage = new CartPage();
 const checkoutPage = new CheckoutPage();
 const navbar = new Navbar();
 
-const firstName = 'John';
-const lastName = 'Doe';
-const postalCode = '12345';
-const productName = 'Sauce Labs Backpack';
+let usernames, passwords;
+let firstName, lastName, postalCode;
+let products;
 
 describe('Checkout Functionality', () => {
   beforeEach(() => {
-    productsPage.visit();
+    cy.fixture('users').then((data) => {
+      ({ usernames, passwords } = data);
+      ({ firstName, lastName, postalCode } = data.checkoutInfo);
+      cy.login(usernames.standard, passwords.valid);
+    });
+    cy.fixture('products').then((data) => {
+      products = data;
+    });
   });
 
   it('successfully checks out with items in cart', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
     checkoutPage.visit();
     checkoutPage.fillCheckoutForm(firstName, lastName, postalCode);
@@ -41,7 +47,7 @@ describe('Checkout Functionality', () => {
   });
 
   it('shows error when first name is blank', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
     checkoutPage.visit();
     checkoutPage.inputLastName(lastName);
@@ -54,7 +60,7 @@ describe('Checkout Functionality', () => {
   });
 
   it('shows error when last name is blank', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
     checkoutPage.visit();
     checkoutPage.inputFirstName(firstName);
@@ -67,7 +73,7 @@ describe('Checkout Functionality', () => {
   });
 
   it('shows error when zipcode is blank', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
     checkoutPage.visit();
     checkoutPage.inputFirstName(firstName);
@@ -80,17 +86,17 @@ describe('Checkout Functionality', () => {
   });
 
   it('cancel from information form page redirects to cart page and keeps items in cart', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
     checkoutPage.visit();
     checkoutPage.cancelCheckout();
     cy.url().should('include', '/cart.html');
-    cartPage.checkProductInCart(productName).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
     navbar.getCartBadge().should('be.visible').and('contain', '1');
   });
 
   it('cancel from overview page redirects to product page and keeps items in cart', () => {
-    productsPage.addProduct(productName);
+    productsPage.addProduct(products.backpack);
     cartPage.visit();
     checkoutPage.visit();
     checkoutPage.fillCheckoutForm(firstName, lastName, postalCode);
@@ -99,13 +105,12 @@ describe('Checkout Functionality', () => {
     cy.url().should('include', '/inventory.html');
     navbar.getCartBadge().should('be.visible').and('contain', '1');
     cartPage.visit();
-    cartPage.checkProductInCart(productName).should('exist');
+    cartPage.checkProductInCart(products.backpack).should('exist');
   });
 
   it('shows correct total when checking out with multiple items', () => {
-    const secondProduct = 'Sauce Labs Bike Light';
-    productsPage.addProduct(productName);
-    productsPage.addProduct(secondProduct);
+    productsPage.addProduct(products.backpack);
+    productsPage.addProduct(products.onesie);
     cartPage.visit();
     checkoutPage.visit();
     checkoutPage.fillCheckoutForm(firstName, lastName, postalCode);
@@ -119,7 +124,7 @@ describe('Checkout Functionality', () => {
         // Add tax to manual subtotal
         checkoutPage.getTax().then(($tax) => {
           const tax = Number($tax.text().split('$')[1]);
-          const manualTotal = manualSubtotal + tax;
+          const manualTotal = Number((manualSubtotal + tax).toFixed(2));
 
           // Compare calculated final total (subtotal + tax) to displayed total
           checkoutPage.getTotal().then(($total) => {

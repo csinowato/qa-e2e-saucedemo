@@ -15,12 +15,6 @@ class LoginPage {
     cy.get('#login-button').click();
   }
 
-  login(username, password) {
-    this.inputUsername(username);
-    this.inputPassword(password);
-    this.clickLogin();
-  }
-
   getErrorMessage() {
     return cy.get('.error-message-container h3');
   }
