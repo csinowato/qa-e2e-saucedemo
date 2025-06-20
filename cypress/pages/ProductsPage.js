@@ -3,8 +3,16 @@ class ProductsPage {
     cy.visit('/inventory.html', { failOnStatusCode: false });
   }
 
+  getProduct(productName) {
+    return cy.contains('.inventory_item', productName);
+  }
+
   getProducts() {
     return cy.get('.inventory_item');
+  }
+
+  getProductImages() {
+    return cy.get('.inventory_item_img img');
   }
 
   addProduct(productName) {

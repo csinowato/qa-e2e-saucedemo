@@ -55,7 +55,8 @@ describe('Navbar Functionality', () => {
   it('prevents access to links when menu is closed', () => {
     cy.on('fail', (err) => {
       expect(err.message).to.include('failed because this element is not visible');
-      return false; // Prevents test from failing
+      // Prevents test from failing since this is expected behavior - links should not be accessible when menu is closed
+      return false;
     });
     navbar.clickAllItems();
   });

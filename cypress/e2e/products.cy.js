@@ -28,14 +28,14 @@ describe('Product Page Functionality', () => {
   it('adds selected product to cart', () => {
     productsPage.addProduct(products.backpack);
     navbar.getCartBadge().should('be.visible').and('contain', '1');
-    cy.contains('.inventory_item', products.backpack).should('contain', 'Remove');
+    productsPage.getProduct(products.backpack).should('contain', 'Remove');
   });
 
   it('removes selected product from cart', () => {
     productsPage.addProduct(products.backpack);
     productsPage.removeProduct(products.backpack);
     navbar.getCartBadge().should('not.exist');
-    cy.contains('.inventory_item', products.backpack).should('contain', 'Add to cart');
+    productsPage.getProduct(products.backpack).should('contain', 'Add to cart');
   });
 
   describe('Sorting Functionality', () => {
